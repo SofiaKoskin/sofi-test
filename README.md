@@ -1,7 +1,7 @@
 # Проект примера автотестов
 ### Установка и настройка виртуального окружения
 ```bash
-python -m venv .venv
+python3.14 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
