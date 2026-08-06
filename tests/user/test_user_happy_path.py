@@ -1,28 +1,147 @@
-import allure
-from hamcrest import assert_that, has_entries
 
-from framework.factory.user.user_process import UserProcess
-from framework.models.user import UserCreate
+import allure #import -это способ взять готовый код из другого файла или библиотеки и использовать его в своей программе, вместо того чтобы писать всё заново.
+import pytest
+from hamcrest import assert_that, has_entries, equal_to, not_none, contains_inanyorder, not_,is_in #import math - подключил весь модуль, обращайся через math.
+from pydantic_core._pydantic_core import TzInfo
+
+from framework.api.handler.http.user.user import create, delete_user, update_user
+from framework.factory.user.user_process import UserProcess # #from math import sqrt - подключил только sqrt, используй просто sqrt()
+from framework.models.user import UserCreate, Gender, User, UserUpdate
+from tests.user.conftest import created_valid_user, valid_user
 
 
 @allure.feature("Тестирование менеджмента пользователей")
 class TestUser:
-    @allure.title("Создание валидного пользователя")
-    @allure.link("https://link-to-some-ticket.com")
-    def test_create_user(self, valid_user: UserCreate):
-        with allure.step("Создание пользователя"):
-            created_user = UserProcess.create_user(user=valid_user)
-
-            assert_that(
-                created_user.model_dump(),
+    @allure.title("Создание валидного пользователя")#Это создание шага в отчете Allure
+    @allure.link("https://link-to-some-ticket.com") #Декоратор - это специальная функция, которая изменяет или дополняет поведение другой функции, не меняя ее код
+    def test_create_user(self, valid_user: UserCreate): #valid_user - это фикстура, она создает пользователя и передает его сюда. #UserCreate - шаблон пользователя
+        #Фикстура - это функция, которая заранее готовит всё нужное для теста.
+        with allure.step("Создание пользователя"): #Это создание шага в отчете Allure
+            created_user = UserProcess.create_user(user=valid_user)# Это создает пользователя, но она делет это через метод create_user, а строка запускает этот процесс и сохраняет результат
+            assert_that( #assert_that - Это функция из библиотеки Hamcrest, она делает проверки красивее чем обычный assert
+                created_user.model_dump(), #model_dump() превращает объект в словарь
                 has_entries(**valid_user.model_dump()),
                 "В итоговом пользователе не совпадают поля с пользователем из запроса",
             )
 
-        with allure.step("Поиск и проверка пользователя"):
-            found_user = UserProcess.get_user_by_id(user_id=created_user.id)
+        with allure.step("Поиск и проверка пользователя"): #Это создание шага в отчете Allure
+            found_user = UserProcess.get_user_by_id(user_id=created_user.id) #Проверяем что пользователь действительно сохранился
 
-            # assert тоже можно применять, он более примитивен и не так кррасиво показывает ошибки в аллюре
-            # Также в идеале применять один подход на проекте (или хотя бы один подход в рамках одного файла)
-            # Поэтому лучше выбрать, что использовать сразу. assert синтаксис легкий, поэтому дальше используем hamcrest
-            assert found_user == valid_user, "Созданный пользователь в ручке поиска не совпадает с создаваемым"
+            assert_that(
+                found_user.model_dump(),
+                has_entries(**valid_user.model_dump()),
+                f"Данные пользователя id={created_user.id} не совпадают после получения"
+            )
+
+            assert_that(
+                found_user,
+                equal_to(created_user),
+                f"Пользователь из ручки поиска id={found_user.id} не совпадает с пользователем из ручки создания id={created_user.id}"
+            )
+
+
+        with allure.step(f"Получение всех пользователей и поиск зозданного"):
+            all_users = UserProcess.get_all_users()
+
+            created_user_from_list = None
+
+            for user in all_users:
+                if user.id == created_user.id:
+                    created_user_from_list = user
+                    break
+
+            assert_that(
+                created_user_from_list,
+                not_none(),
+                f"Пользователь id={created_user.id} не найден в списке пользователей"
+
+            )
+
+            assert_that(
+                created_user_from_list,
+                equal_to(created_user),
+                f"Пользователь id={created_user.id} из списка не совпадает с пользовавтелем, созданным через POST"
+
+            )
+
+    @pytest.mark.parametrize(
+        "age, expected_status",
+        [
+            pytest.param(17, 400, id='1'),
+            pytest.param(18, 201, id='2'),
+            pytest.param(100, 201, id='3'),
+            pytest.param(101, 400, id='4'),
+        ],
+
+    )
+    @allure.title("Создание пользователя с разным возрастом")
+    # @pytest.mark.xfail(reason='тут короче падает с неправильными возрастами - отдает 201')
+    def test_create_user_age(self, valid_user: UserCreate, age: int, expected_status: int):
+        valid_user.age = age
+        UserProcess.create_user(user=valid_user, expected_status = expected_status, serialize=False)
+
+
+
+
+    @allure.title("Удаление пользователя")
+    def test_delete_user(self, created_valid_user: User):
+        UserProcess.delete_user(user_id=created_valid_user.id)
+
+        with allure.step("Проверка, что пользоваетль удален"):
+            UserProcess.get_user_by_id(user_id=created_valid_user.id, serialize=False, expected_status=404)
+
+        with allure.step("Проверка, что пользователя нет в списке"):
+            all_users = UserProcess.get_all_users()
+            deleted_user = None
+            for user in all_users:
+                if user.id == created_valid_user.id:
+                    deleted_user = user
+                    break
+
+            assert_that(
+                deleted_user,
+                equal_to(None),
+                f"Пользователь id={created_valid_user.id} найден в списке после удаления"
+            )
+
+
+    @allure.title("Изменение пользователя")
+    def test_update_user(self, created_valid_user: User):
+
+        created_valid_user.age = 25
+
+        updated_user = UserProcess.update_user(user_id=created_valid_user.id, user=created_valid_user)
+
+        assert_that(
+            updated_user,
+            equal_to(created_valid_user),
+            f"Данные пользователя id={created_valid_user.id} не обновились"
+
+        )
+
+
+    @allure.title("Получение пользователей по имени")
+    def test_get_users_by_name(self, created_users: tuple[User, User, User]):
+
+        user1, user2, user3 = created_users
+
+        with allure.step("Получение пользователей по имени"):
+            found_users = UserProcess.get_users_by_name(name=user1.name)
+
+            assert_that(
+                len(found_users),
+                equal_to(2),
+                f"Количество найденных пользователей не соотвествует ожидаемому"
+            )
+
+            assert_that(
+                found_users,
+                contains_inanyorder(user1,user2),
+                f"Данные пользователей {user1} и {user2} не совпадают с созданными"
+            )
+
+            assert_that(
+                user3,
+                not_(is_in(found_users)),
+                f"Пользователь с другим именем был найден в результатах поиска: {user3}"
+            )
