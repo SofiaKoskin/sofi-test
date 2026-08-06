@@ -20,14 +20,18 @@ class Gender(StrEnum):
 class UserBase(APIModel):
     name: str
     age: int
-    interests: list[str]
-    gender: Gender
-    email: EmailStr
+    interests: list[str] | None
+    gender: str
+    email: str
     phone: str
     birth_date: datetime
 
 
 class UserCreate(UserBase):
+    pass
+
+
+class UserUpdate(UserBase):
     pass
 
 
