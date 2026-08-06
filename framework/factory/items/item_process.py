@@ -4,7 +4,7 @@ from framework.api.handler.http.item import item as item_handler
 from framework.models.item import Item, ItemCreate, ItemUpdate
 
 
-class UserProcess:
+class ItemProcess:
     @staticmethod
     def create_item(*, item: ItemCreate | dict, serialize: bool = True, expected_status: int = 201) -> Item | dict:
         with allure.step(f"Создание товара {item=}"):
