@@ -7,6 +7,7 @@ from framework.api.handler.http.item.item import create, delete_item, update_ite
 from framework.factory.items.item_process import ItemProcess
 from framework.models.item import ItemCreate, Item, ItemUpdate
 from tests.items.confest import created_valid_item, valid_item
+from tests.items.confest import created_items
 
 
 @allure.feature("Тестирование менеджмента товаров")
@@ -114,3 +115,28 @@ class TestItem:
 
 
 
+    @allure.title("Получение товаров по имени")
+    def test_get_items_by_name(self, created_items: tuple[Item, Item, Item]):
+
+        item1, item2, item3 = created_items
+
+        with allure.step("Получение товаров по имени"):
+            found_items = ItemProcess.get_items_by_name(name=item1.name)
+
+            assert_that(
+                len(found_items),
+                equal_to(2),
+                f"Количество найденных товаров не соотвествует ожидаемому"
+            )
+
+            assert_that(
+                found_items,
+                contains_inanyorder(item1,item2),
+                f"Данные товары {item1} и {item2} не совпадают с созданными"
+            )
+
+            assert_that(
+                item3,
+                not_(is_in(found_items)),
+                f"Товар с другим именем был найден в результатах поиска: {item3}"
+            )
