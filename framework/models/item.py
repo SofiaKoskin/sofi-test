@@ -1,6 +1,6 @@
-
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, EmailStr
+
+from pydantic import BaseModel, ConfigDict
 
 
 class APIModel(BaseModel):
@@ -18,7 +18,6 @@ class ItemBase(APIModel):
 
 class ItemCreate(ItemBase):
     pass
-
 
 
 class ItemUpdate(ItemBase):

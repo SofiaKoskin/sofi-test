@@ -1,14 +1,11 @@
 import random
 from datetime import UTC, datetime
 
-from framework.models.user import User
-
-
 import pytest
 from faker.proxy import Faker
 
 from framework.factory.user.user_process import UserProcess
-from framework.models.user import Gender, UserCreate
+from framework.models.user import Gender, User, UserCreate
 
 faker = Faker("ru_RU")
 
@@ -30,6 +27,7 @@ def valid_user() -> UserCreate:
         ),
     )
 
+
 @pytest.fixture
 def created_valid_user(valid_user: UserCreate) -> User:
     return UserProcess.create_user(user=valid_user)
@@ -50,4 +48,9 @@ def created_users(valid_user: UserCreate) -> tuple[User, User, User]:
     other_name.phone = faker.numerify("+7##########")
     user3 = UserProcess.create_user(user=other_name)
 
-    return  user1, user2, user3
+    return user1, user2, user3
+
+
+# TODO
+# переделать UserCreate, ... на соответствующие имена из сваггера - пкм, рефактор, ренейм
+# ruff check --fix - починить на что ругается. ruff format

@@ -32,7 +32,7 @@ class ItemProcess:
 
     @staticmethod
     def get_all_items(*, serialize: bool = True, expected_status: int = 200) -> list[Item] | list[dict]:
-        with allure.step(f"Получение списка всех товаров"):
+        with allure.step("Получение списка всех товаров"):
             response = item_handler.get_all_items(expected_status=expected_status)
 
             if serialize:
@@ -46,10 +46,13 @@ class ItemProcess:
             return item_handler.delete_item(item_id=item_id, expected_status=expected_status)
 
     @staticmethod
-    def update_item(*, item_id: int, item: ItemUpdate, serialize: bool = True,
-                    expected_status: int = 200) -> Item | dict:
+    def update_item(
+        *, item_id: int, item: ItemUpdate, serialize: bool = True, expected_status: int = 200
+    ) -> Item | dict:
         with allure.step(f"Обновление товара id={item_id}"):
-            response = item_handler.update_item(item_id=item_id, data=item.model_dump(mode="json"),expected_status=expected_status)
+            response = item_handler.update_item(
+                item_id=item_id, data=item.model_dump(mode="json"), expected_status=expected_status
+            )
 
             if serialize:
                 return Item.model_validate(response)

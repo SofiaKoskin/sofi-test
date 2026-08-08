@@ -28,4 +28,4 @@ def update_item(*, item_id: int, data: dict, expected_status: int = 200) -> dict
 
 def get_item_by_name(*, name: str, expected_status: int = 200) -> list[dict]:
     client = APIClient()
-    return client.post_json(path=f"/items/name", json={"name": name}, expected_status=expected_status)
+    return client.post_json(path="/items/name", json={"name": name}, expected_status=expected_status)

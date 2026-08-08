@@ -32,7 +32,7 @@ class UserProcess:
 
     @staticmethod
     def get_all_users(*, serialize: bool = True, expected_status: int = 200) -> list[User] | list[dict]:
-        with allure.step(f"Получение списка всех пользователей"):
+        with allure.step("Получение списка всех пользователей"):
             response = user_handler.get_all_users(expected_status=expected_status)
 
             if serialize:
@@ -46,11 +46,13 @@ class UserProcess:
             return user_handler.delete_user(user_id=user_id, expected_status=expected_status)
 
     @staticmethod
-    def update_user(*, user_id: int, user: UserUpdate, serialize: bool = True,
-                    expected_status: int = 200) -> User | dict:
+    def update_user(
+        *, user_id: int, user: UserUpdate, serialize: bool = True, expected_status: int = 200
+    ) -> User | dict:
         with allure.step(f"Обновление пользователяid={user_id}"):
-            response = user_handler.update_user(user_id=user_id, data=user.model_dump(mode="json"),
-                                                expected_status=expected_status)
+            response = user_handler.update_user(
+                user_id=user_id, data=user.model_dump(mode="json"), expected_status=expected_status
+            )
 
             if serialize:
                 return User.model_validate(response)

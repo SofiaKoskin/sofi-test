@@ -28,4 +28,4 @@ def update_user(*, user_id: int, data: dict, expected_status: int = 200) -> dict
 
 def get_user_by_name(*, name: str, expected_status: int = 200) -> list[dict]:
     client = APIClient()
-    return client.post_json(path=f"/users/name", json={"name": name}, expected_status=expected_status)
+    return client.post_json(path="/users/name", json={"name": name}, expected_status=expected_status)
