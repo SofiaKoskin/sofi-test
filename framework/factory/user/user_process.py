@@ -1,14 +1,14 @@
 import allure
 
 from framework.api.handler.http.user import user as user_handler
-from framework.models.user import User, UserCreate, UserUpdate
+from framework.models.user import User, UserRequest, UserCreateResponse
 
 
 class UserProcess:
     @staticmethod
-    def create_user(*, user: UserCreate | dict, serialize: bool = True, expected_status: int = 201) -> User | dict:
+    def create_user(*, user: UserRequest | dict, serialize: bool = True, expected_status: int = 201) -> UserCreateResponse | dict:
         with allure.step(f"Создание пользователя {user=}"):
-            if isinstance(user, UserCreate):
+            if isinstance(user, UserRequest):
                 response = user_handler.create(data=user.model_dump(mode="json"), expected_status=expected_status)
             elif isinstance(user, dict):
                 response = user_handler.create(data=user, expected_status=expected_status)
@@ -16,7 +16,7 @@ class UserProcess:
                 raise ValueError("Непонятный тип у пользователя")
 
             if serialize:
-                return User.model_validate(obj=response)
+                return UserCreateResponse.model_validate(response)
             else:
                 return response
 
@@ -26,7 +26,7 @@ class UserProcess:
             response = user_handler.get_user_by_id(user_id=user_id, expected_status=expected_status)
 
             if serialize:
-                return User.model_validate(obj=response)
+                return User.model_validate(response)
             else:
                 return response
 
@@ -42,12 +42,12 @@ class UserProcess:
 
     @staticmethod
     def delete_user(*, user_id: int, expected_status: int = 204) -> dict:
-        with allure.step(f"Удаление пользователя по id:{user_id=}"):
+        with allure.step(f"Удаление пользователя по id:{user_id}"):
             return user_handler.delete_user(user_id=user_id, expected_status=expected_status)
 
     @staticmethod
     def update_user(
-        *, user_id: int, user: UserUpdate, serialize: bool = True, expected_status: int = 200
+        *, user_id: int, user: UserRequest, serialize: bool = True, expected_status: int = 200
     ) -> User | dict:
         with allure.step(f"Обновление пользователяid={user_id}"):
             response = user_handler.update_user(

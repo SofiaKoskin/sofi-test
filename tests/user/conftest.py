@@ -5,15 +5,15 @@ import pytest
 from faker.proxy import Faker
 
 from framework.factory.user.user_process import UserProcess
-from framework.models.user import Gender, User, UserCreate
+from framework.models.user import Gender, User, UserRequest
 
 faker = Faker("ru_RU")
 
 
 @pytest.fixture
-def valid_user() -> UserCreate:
+def valid_user() -> UserRequest:
     age = random.randint(18, 100)
-    return UserCreate(
+    return UserRequest(
         name=faker.name(),
         email=faker.email(safe=True),
         age=age,
@@ -29,28 +29,29 @@ def valid_user() -> UserCreate:
 
 
 @pytest.fixture
-def created_valid_user(valid_user: UserCreate) -> User:
-    return UserProcess.create_user(user=valid_user)
+def created_valid_user(valid_user: UserRequest) -> User:
+    created_user = UserProcess.create_user(user=valid_user)
+    return UserProcess.get_user_by_id(user_id=created_user.id)
 
 
 @pytest.fixture
-def created_users(valid_user: UserCreate) -> tuple[User, User, User]:
-    user1 = UserProcess.create_user(user=valid_user)
+def created_users(valid_user: UserRequest) -> tuple[User, User, User]:
+    user1_id = UserProcess.create_user(user=valid_user).id
+    user1 = UserProcess.get_user_by_id(user_id=user1_id)
 
     same_name = valid_user.model_copy()
     same_name.email = faker.email(safe=True)
     same_name.phone = faker.numerify("+7##########")
-    user2 = UserProcess.create_user(user=same_name)
+
+    user2_id = UserProcess.create_user(user=same_name).id
+    user2 = UserProcess.get_user_by_id(user_id=user2_id)
 
     other_name = valid_user.model_copy()
     other_name.name = "Олег"
     other_name.email = faker.email(safe=True)
     other_name.phone = faker.numerify("+7##########")
-    user3 = UserProcess.create_user(user=other_name)
+
+    user3_id = UserProcess.create_user(user=other_name).id
+    user3 = UserProcess.get_user_by_id(user_id=user3_id)
 
     return user1, user2, user3
-
-
-# TODO
-# переделать UserCreate, ... на соответствующие имена из сваггера - пкм, рефактор, ренейм
-# ruff check --fix - починить на что ругается. ruff format

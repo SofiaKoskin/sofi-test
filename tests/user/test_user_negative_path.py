@@ -3,7 +3,7 @@ import pytest
 from hamcrest import assert_that, empty, not_
 
 from framework.factory.user.user_process import UserProcess
-from framework.models.user import User, UserCreate
+from framework.models.user import User, UserRequest
 
 
 @allure.feature("Негативное тестирование менеджмента пользователей")
@@ -18,7 +18,7 @@ class TestUserNegative:
         ],
     )
     @allure.title("Создание пользователя с разным возрастом")
-    def test_create_user_age(self, valid_user: UserCreate, age: int, expected_status: int):
+    def test_create_user_age(self, valid_user: UserRequest, age: int, expected_status: int):
         valid_user.age = age
         UserProcess.create_user(user=valid_user, expected_status=expected_status, serialize=False)
 
@@ -30,7 +30,7 @@ class TestUserNegative:
         ],
     )
     @allure.title("Создание пользователя с пустым именем")
-    def test_create_user_empty_name(self, valid_user: UserCreate, name: str):
+    def test_create_user_empty_name(self, valid_user: UserRequest, name: str):
         valid_user.name = name
         UserProcess.create_user(user=valid_user, expected_status=400, serialize=False)
 
@@ -44,7 +44,7 @@ class TestUserNegative:
         ],
     )
     @allure.title("Создание пользователя с некорректным email")
-    def test_create_user_invalid_email(self, valid_user: UserCreate, email: str):
+    def test_create_user_invalid_email(self, valid_user: UserRequest, email: str):
         valid_user.email = email
         UserProcess.create_user(user=valid_user, expected_status=400, serialize=False)
 
@@ -57,12 +57,12 @@ class TestUserNegative:
         ],
     )
     @allure.title("Создание пользователя с некорректным телефоном")
-    def test_create_user_invalid_phone(self, valid_user: UserCreate, phone: str):
+    def test_create_user_invalid_phone(self, valid_user: UserRequest, phone: str):
         valid_user.phone = phone
         UserProcess.create_user(user=valid_user, expected_status=400, serialize=False)
 
     @allure.title("Создание пользователя с существующим телефоном")
-    def test_create_user_dublicate_phone(self, valid_user: UserCreate, created_valid_user: User):
+    def test_create_user_dublicate_phone(self, valid_user: UserRequest, created_valid_user: User):
         valid_user.phone = created_valid_user.phone
         UserProcess.create_user(user=valid_user, expected_status=400, serialize=False)
 
@@ -100,7 +100,7 @@ class TestUserNegative:
         )
 
     @allure.title("Обновление несуществующего пользователя")
-    def test_update_non_existent_user(self, valid_user: UserCreate):
+    def test_update_non_existent_user(self, valid_user: UserRequest):
         UserProcess.update_user(user_id=9999999, user=valid_user, expected_status=404, serialize=False)
 
     @allure.title("Удаление несуществующего пользователя")

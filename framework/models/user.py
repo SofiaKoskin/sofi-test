@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class APIModel(BaseModel):
@@ -17,25 +17,40 @@ class Gender(StrEnum):
     OTHER = "other"
 
 
-class UserBase(APIModel):
-    name: str
+class User(APIModel):
     age: int
-    interests: list[str] | None
-    gender: str
-    email: str
-    phone: str
     birth_date: datetime
-
-
-class UserCreate(UserBase):
-    pass
-
-
-class UserUpdate(UserBase):
-    pass
-
-
-class User(UserBase):
-    id: int
     created_at: datetime
+    email: str
+    gender: Gender
+    id: int
+    interests: list[str]
+    name: str
+    phone: str
     updated_at: datetime
+
+
+class UserCreateResponse(APIModel):
+    id: int
+
+
+class UserNameRequest(APIModel):
+    name: str
+
+
+
+class UserRequest(APIModel):
+    age: int = Field(
+        ge=18,
+        le=100,
+    )
+    birth_date: datetime
+    email: str
+    gender: Gender
+    interests: list[str]
+    name: str
+    phone: str
+
+
+
+
