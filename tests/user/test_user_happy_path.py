@@ -96,7 +96,11 @@ class TestUser:
         update_user = valid_user.model_copy()
         update_user.age = 25
 
-        updated_user = UserProcess.update_user(user_id=created_valid_user.id, user=update_user)
+        with allure.step("Обновление пользователя"):
+            UserProcess.update_user(user_id=created_valid_user.id,user=update_user)
+
+        with allure.step("Проверка обновленных данных"):
+            updated_user = UserProcess.get_user_by_id(user_id=created_valid_user.id)
 
         assert_that(
             updated_user.age, equal_to(25), f"Данные пользователя id={created_valid_user.id} не обновились"

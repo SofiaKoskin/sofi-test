@@ -47,17 +47,12 @@ class UserProcess:
 
     @staticmethod
     def update_user(
-        *, user_id: int, user: UserRequest, serialize: bool = True, expected_status: int = 200
-    ) -> User | dict:
+        *, user_id: int, user: UserRequest, expected_status: int = 200
+    ) -> None:
         with allure.step(f"Обновление пользователяid={user_id}"):
-            response = user_handler.update_user(
+            user_handler.update_user(
                 user_id=user_id, data=user.model_dump(mode="json"), expected_status=expected_status
             )
-
-            if serialize:
-                return User.model_validate(response)
-            else:
-                return response
 
     @staticmethod
     def get_users_by_name(*, name: str, serialize: bool = True, expected_status: int = 200) -> list[User] | list[dict]:
