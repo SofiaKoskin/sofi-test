@@ -3,7 +3,7 @@ import pytest
 from hamcrest import assert_that, empty, not_
 
 from framework.factory.items.item_process import ItemProcess
-from framework.models.item import Item, ItemCreate
+from framework.models.models_items import ItemCreateResponse, ItemRequest
 
 
 @allure.feature("Негативное тестирование менеджмента товаров")
@@ -15,7 +15,7 @@ class TestItemNegative:
         ],
     )
     @allure.title("Создание товара с пустым названием")
-    def test_create_item_empty_name(self, valid_item: ItemCreate, name: str):
+    def test_create_item_empty_name(self, valid_item: ItemCreateResponse, name: str):
         valid_item.name = name
 
         ItemProcess.create_item(item=valid_item, expected_status=400, serialize=False)
@@ -29,7 +29,7 @@ class TestItemNegative:
         ],
     )
     @allure.title("Создание товара с некорректным описанием")
-    def test_create_item_invalid_description(self, valid_item: ItemCreate, description: str):
+    def test_create_item_invalid_description(self, valid_item: ItemCreateResponse, description: str):
         valid_item.description = description
 
         ItemProcess.create_item(item=valid_item, expected_status=400, serialize=False)
@@ -50,16 +50,16 @@ class TestItemNegative:
         ItemProcess.get_item_by_id(item_id=item_id, expected_status=404, serialize=False)
 
     @allure.title("Обновление товара с пустым названием")
-    def test_update_item_empty_name(self, created_valid_item: Item):
+    def test_update_item_empty_name(self, created_valid_item: ItemRequest):
         created_valid_item.name = ""
 
         ItemProcess.update_item(
-            item_id=created_valid_item.id, item=created_valid_item, expected_status=400, serialize=False
+            item_id=created_valid_item.id, item=created_valid_item, expected_status=400
         )
 
     @allure.title("Обновление несуществующего товара")
-    def test_update_non_existent_item(self, valid_item: ItemCreate):
-        ItemProcess.update_item(item_id=9999999, item=valid_item, expected_status=404, serialize=False)
+    def test_update_non_existent_item(self, valid_item: ItemCreateResponse):
+        ItemProcess.update_item(item_id=9999999, item=valid_item, expected_status=404)
 
     @allure.title("Удаление несуществующего товара")
     def test_delete_non_existent_item(self):

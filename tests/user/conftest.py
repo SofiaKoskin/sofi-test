@@ -5,7 +5,7 @@ import pytest
 from faker.proxy import Faker
 
 from framework.factory.user.user_process import UserProcess
-from framework.models.user import Gender, User, UserRequest
+from framework.models.models_user import Gender, User, UserRequest
 
 faker = Faker("ru_RU")
 

@@ -21,9 +21,9 @@ def delete_item(*, item_id: int, expected_status: int = 204) -> dict:
     return client.delete_json(path=f"/items/{item_id}", expected_status=expected_status)
 
 
-def update_item(*, item_id: int, data: dict, expected_status: int = 200) -> dict:
+def update_item(*, item_id: int, data: dict, expected_status: int = 200) -> None:
     client = APIClient()
-    return client.put_json(path=f"/items/{item_id}", json=data, expected_status=expected_status)
+    client.put(path=f"/items/{item_id}", json=data, expected_status=expected_status)
 
 
 def get_item_by_name(*, name: str, expected_status: int = 200) -> list[dict]:

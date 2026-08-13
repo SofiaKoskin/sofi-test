@@ -9,11 +9,10 @@ from hamcrest import (  # import math - подключил весь модуль
     not_none,
 )
 
-from framework.api.handler.http.item.item import update_item
 from framework.factory.user.user_process import (
     UserProcess,  # #from math import sqrt - подключил только sqrt, используй просто sqrt()
 )
-from framework.models.user import User, UserRequest
+from framework.models.models_user import User, UserRequest
 
 
 @allure.feature("Тестирование менеджмента пользователей")

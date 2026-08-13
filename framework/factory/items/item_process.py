@@ -1,14 +1,14 @@
 import allure
 
-from framework.api.handler.http.item import item as item_handler
-from framework.models.item import Item, ItemCreate, ItemUpdate
+from framework.api.handler.http.item import client_item as item_handler
+from framework.models.models_items import Item, ItemCreateResponse, ItemRequest
 
 
 class ItemProcess:
     @staticmethod
-    def create_item(*, item: ItemCreate | dict, serialize: bool = True, expected_status: int = 201) -> Item | dict:
+    def create_item(*, item: ItemRequest | dict, serialize: bool = True, expected_status: int = 201) -> ItemCreateResponse | dict:
         with allure.step(f"Создание товара {item=}"):
-            if isinstance(item, ItemCreate):
+            if isinstance(item, ItemRequest):
                 response = item_handler.create(data=item.model_dump(mode="json"), expected_status=expected_status)
             elif isinstance(item, dict):
                 response = item_handler.create(data=item, expected_status=expected_status)
@@ -16,7 +16,7 @@ class ItemProcess:
                 raise ValueError("Непонятный тип у товара")
 
             if serialize:
-                return Item.model_validate(obj=response)
+                return ItemCreateResponse.model_validate(response)
             else:
                 return response
 
@@ -26,7 +26,7 @@ class ItemProcess:
             response = item_handler.get_item_by_id(item_id=item_id, expected_status=expected_status)
 
             if serialize:
-                return Item.model_validate(obj=response)
+                return Item.model_validate(response)
             else:
                 return response
 
@@ -47,17 +47,9 @@ class ItemProcess:
 
     @staticmethod
     def update_item(
-        *, item_id: int, item: ItemUpdate, serialize: bool = True, expected_status: int = 200
-    ) -> Item | dict:
+        *, item_id: int, item: ItemRequest, expected_status: int = 200) -> None:
         with allure.step(f"Обновление товара id={item_id}"):
-            response = item_handler.update_item(
-                item_id=item_id, data=item.model_dump(mode="json"), expected_status=expected_status
-            )
-
-            if serialize:
-                return Item.model_validate(response)
-            else:
-                return response
+            item_handler.update_item(item_id=item_id,data=item.model_dump(mode="json"), expected_status=expected_status)
 
     @staticmethod
     def get_items_by_name(*, name: str, serialize: bool = True, expected_status: int = 200) -> list[Item] | list[dict]:

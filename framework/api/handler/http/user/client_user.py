@@ -1,5 +1,6 @@
 from framework.api.client.http.http_client import APIClient
 
+
 def create(*, data: dict, expected_status: int = 201) -> dict:
     client = APIClient()
     return client.post_json(path="/users", json=data, expected_status=expected_status)

@@ -3,7 +3,7 @@ import pytest
 from hamcrest import assert_that, empty, not_
 
 from framework.factory.user.user_process import UserProcess
-from framework.models.user import User, UserRequest
+from framework.models.models_user import User, UserRequest
 
 
 @allure.feature("Негативное тестирование менеджмента пользователей")

@@ -1,7 +1,7 @@
 import allure
 
-from framework.api.handler.http.user import user as user_handler
-from framework.models.user import User, UserRequest, UserCreateResponse
+from framework.api.handler.http.user import client_user as user_handler
+from framework.models.models_user import User, UserCreateResponse, UserRequest
 
 
 class UserProcess:
