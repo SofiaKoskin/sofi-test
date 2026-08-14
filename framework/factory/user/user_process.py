@@ -6,7 +6,9 @@ from framework.models.models_user import User, UserCreateResponse, UserRequest
 
 class UserProcess:
     @staticmethod
-    def create_user(*, user: UserRequest | dict, serialize: bool = True, expected_status: int = 201) -> UserCreateResponse | dict:
+    def create_user(
+        *, user: UserRequest | dict, serialize: bool = True, expected_status: int = 201
+    ) -> UserCreateResponse | dict:
         with allure.step(f"Создание пользователя {user=}"):
             if isinstance(user, UserRequest):
                 response = user_handler.create(data=user.model_dump(mode="json"), expected_status=expected_status)
@@ -46,9 +48,7 @@ class UserProcess:
             return user_handler.delete_user(user_id=user_id, expected_status=expected_status)
 
     @staticmethod
-    def update_user(
-        *, user_id: int, user: UserRequest, expected_status: int = 200
-    ) -> None:
+    def update_user(*, user_id: int, user: UserRequest, expected_status: int = 200) -> None:
         with allure.step(f"Обновление пользователяid={user_id}"):
             user_handler.update_user(
                 user_id=user_id, data=user.model_dump(mode="json"), expected_status=expected_status

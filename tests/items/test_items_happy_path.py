@@ -28,7 +28,6 @@ class TestItem:
                 f"Данные товара id={created_item_response.id} не совпадают после получения",
             )
 
-
         with allure.step("Получение всех товаров и поиск созданного"):
             all_items = ItemProcess.get_all_items()
             created_item_from_list = None
@@ -38,14 +37,15 @@ class TestItem:
                     created_item_from_list = item
                     break
 
-            assert_that(created_item_from_list, not_none(), f"Товар id={created_item_response.id} не найден в списке товаров")
+            assert_that(
+                created_item_from_list, not_none(), f"Товар id={created_item_response.id} не найден в списке товаров"
+            )
 
             assert_that(
                 created_item_from_list,
                 equal_to(found_item),
                 f"Товар id={created_item_response.id} из списка не совпадает с найденным товаром",
             )
-
 
     @allure.title("Удаление товара")
     def test_delete_item(self, created_valid_item: Item):
@@ -71,20 +71,16 @@ class TestItem:
         updated_item = valid_item.model_copy()
         updated_item.price = 999999
 
-
         with allure.step("Обновление товара"):
             ItemProcess.update_item(item_id=created_valid_item.id, item=updated_item)
 
         with allure.step("Проверка обновленных данных"):
-            updated_item = ItemProcess.get_item_by_id(
-                item_id=created_valid_item.id
-            )
+            updated_item = ItemProcess.get_item_by_id(item_id=created_valid_item.id)
 
         assert_that(
             updated_item.price,
             equal_to(999999),
-            f"Данные товара id={created_valid_item.id} "
-            "не обновились",
+            f"Данные товара id={created_valid_item.id} не обновились",
         )
 
     @allure.title("Получение товаров по имени")

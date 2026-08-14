@@ -38,7 +38,6 @@ class UserNameRequest(APIModel):
     name: str
 
 
-
 class UserRequest(APIModel):
     age: int = Field(
         ge=18,
@@ -50,7 +49,3 @@ class UserRequest(APIModel):
     interests: list[str]
     name: str
     phone: str
-
-
-
-

@@ -46,8 +46,6 @@ class TestUser:
                 f"Данные пользователя id={created_user_response.id} не совпадают после получения",
             )
 
-
-
         with allure.step("Получение всех пользователей и поиск зозданного"):
             all_users = UserProcess.get_all_users()
 
@@ -96,14 +94,12 @@ class TestUser:
         update_user.age = 25
 
         with allure.step("Обновление пользователя"):
-            UserProcess.update_user(user_id=created_valid_user.id,user=update_user)
+            UserProcess.update_user(user_id=created_valid_user.id, user=update_user)
 
         with allure.step("Проверка обновленных данных"):
             updated_user = UserProcess.get_user_by_id(user_id=created_valid_user.id)
 
-        assert_that(
-            updated_user.age, equal_to(25), f"Данные пользователя id={created_valid_user.id} не обновились"
-        )
+        assert_that(updated_user.age, equal_to(25), f"Данные пользователя id={created_valid_user.id} не обновились")
 
     @allure.title("Получение пользователей по имени")
     def test_get_users_by_name(self, created_users: tuple[User, User, User]):

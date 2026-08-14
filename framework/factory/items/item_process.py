@@ -6,7 +6,9 @@ from framework.models.models_items import Item, ItemCreateResponse, ItemRequest
 
 class ItemProcess:
     @staticmethod
-    def create_item(*, item: ItemRequest | dict, serialize: bool = True, expected_status: int = 201) -> ItemCreateResponse | dict:
+    def create_item(
+        *, item: ItemRequest | dict, serialize: bool = True, expected_status: int = 201
+    ) -> ItemCreateResponse | dict:
         with allure.step(f"Создание товара {item=}"):
             if isinstance(item, ItemRequest):
                 response = item_handler.create(data=item.model_dump(mode="json"), expected_status=expected_status)
@@ -46,10 +48,11 @@ class ItemProcess:
             return item_handler.delete_item(item_id=item_id, expected_status=expected_status)
 
     @staticmethod
-    def update_item(
-        *, item_id: int, item: ItemRequest, expected_status: int = 200) -> None:
+    def update_item(*, item_id: int, item: ItemRequest, expected_status: int = 200) -> None:
         with allure.step(f"Обновление товара id={item_id}"):
-            item_handler.update_item(item_id=item_id,data=item.model_dump(mode="json"), expected_status=expected_status)
+            item_handler.update_item(
+                item_id=item_id, data=item.model_dump(mode="json"), expected_status=expected_status
+            )
 
     @staticmethod
     def get_items_by_name(*, name: str, serialize: bool = True, expected_status: int = 200) -> list[Item] | list[dict]:

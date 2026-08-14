@@ -53,9 +53,7 @@ class TestItemNegative:
     def test_update_item_empty_name(self, created_valid_item: ItemRequest):
         created_valid_item.name = ""
 
-        ItemProcess.update_item(
-            item_id=created_valid_item.id, item=created_valid_item, expected_status=400
-        )
+        ItemProcess.update_item(item_id=created_valid_item.id, item=created_valid_item, expected_status=400)
 
     @allure.title("Обновление несуществующего товара")
     def test_update_non_existent_item(self, valid_item: ItemCreateResponse):

@@ -23,7 +23,8 @@ def delete_user(*, user_id: int, expected_status: int = 204) -> dict:
 
 def update_user(*, user_id: int, data: dict, expected_status: int = 200) -> None:
     client = APIClient()
-    client.put(path=f"/users/{user_id}", json=data,expected_status=expected_status)
+    client.put(path=f"/users/{user_id}", json=data, expected_status=expected_status)
+
 
 def get_user_by_name(*, name: str, expected_status: int = 200) -> list[dict]:
     client = APIClient()
