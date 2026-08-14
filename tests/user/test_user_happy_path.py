@@ -1,5 +1,5 @@
-import allure  # import -это способ взять готовый код из другого файла или библиотеки и использовать его в своей программе, вместо того чтобы писать всё заново.
-from hamcrest import (  # import math - подключил весь модуль, обращайся через math.
+import allure
+from hamcrest import (
     assert_that,
     contains_inanyorder,
     equal_to,
@@ -10,35 +10,27 @@ from hamcrest import (  # import math - подключил весь модуль
 )
 
 from framework.factory.user.user_process import (
-    UserProcess,  # #from math import sqrt - подключил только sqrt, используй просто sqrt()
+    UserProcess,
 )
 from framework.models.models_user import User, UserRequest
 
 
 @allure.feature("Тестирование менеджмента пользователей")
 class TestUser:
-    @allure.title("Создание валидного пользователя")  # Это создание шага в отчете Allure
-    @allure.link(
-        "https://link-to-some-ticket.com"
-    )  # Декоратор - это специальная функция, которая изменяет или дополняет поведение другой функции, не меняя ее код
-    def test_create_user(
-        self, valid_user: UserRequest
-    ):  # valid_user - это фикстура, она создает пользователя и передает его сюда. #UserCreate - шаблон пользователя
-        # Фикстура - это функция, которая заранее готовит всё нужное для теста.
-        with allure.step("Создание пользователя"):  # Это создание шага в отчете Allure
-            created_user_response = UserProcess.create_user(
-                user=valid_user
-            )  # Это создает пользователя, но она делет это через метод create_user, а строка запускает этот процесс и сохраняет результат
-            assert_that(  # assert_that - Это функция из библиотеки Hamcrest, она делает проверки красивее чем обычный assert
+    @allure.title("Создание валидного пользователя")
+    @allure.link("https://link-to-some-ticket.com")
+    def test_create_user(self, valid_user: UserRequest):
+
+        with allure.step("Создание пользователя"):
+            created_user_response = UserProcess.create_user(user=valid_user)
+            assert_that(
                 created_user_response.id,
                 not_none(),
                 "После создания пользователя не вернулся id",
             )
 
-        with allure.step("Поиск и проверка пользователя"):  # Это создание шага в отчете Allure
-            found_user = UserProcess.get_user_by_id(
-                user_id=created_user_response.id
-            )  # Проверяем что пользователь действительно сохранился
+        with allure.step("Поиск и проверка пользователя"):
+            found_user = UserProcess.get_user_by_id(user_id=created_user_response.id)
 
             assert_that(
                 found_user.model_dump(),

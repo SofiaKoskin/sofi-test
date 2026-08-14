@@ -76,9 +76,9 @@ class APIClient:
         raise_for_status: bool = True,
         **kwargs: Any,
     ) -> requests.Response:
-        url = self._build_url(path)
+        url = self._build_url(path=path)
 
-        self._log_request(method, url, **kwargs)
+        self._log_request(method=method, url=url, **kwargs)
 
         try:
             headers = self.headers.copy()
@@ -101,7 +101,7 @@ class APIClient:
             if response.cookies:
                 self.cookies.update(response.cookies.get_dict())
 
-            self._log_response(response)
+            self._log_response(response=response)
 
             if expected_status is not None and response.status_code != expected_status:
                 raise APIError(
@@ -135,7 +135,7 @@ class APIClient:
         **kwargs: Any,
     ) -> requests.Response:
         """GET запрос"""
-        return self._request("GET", path, params=params, expected_status=expected_status, **kwargs)
+        return self._request(method="GET", path=path, params=params, expected_status=expected_status, **kwargs)
 
     def post(
         self,
@@ -147,8 +147,8 @@ class APIClient:
     ) -> requests.Response:
         """POST запрос"""
         return self._request(
-            "POST",
-            path,
+            method="POST",
+            path=path,
             data=data,
             json=json,
             expected_status=expected_status,
@@ -164,7 +164,7 @@ class APIClient:
         **kwargs: Any,
     ) -> requests.Response:
         """PUT запрос"""
-        return self._request("PUT", path, data=data, json=json, expected_status=expected_status, **kwargs)
+        return self._request(method="PUT", path=path, data=data, json=json, expected_status=expected_status, **kwargs)
 
     def patch(
         self,
@@ -176,8 +176,8 @@ class APIClient:
     ) -> requests.Response:
         """PATCH запрос"""
         return self._request(
-            "PATCH",
-            path,
+            method="PATCH",
+            path=path,
             data=data,
             json=json,
             expected_status=expected_status,
@@ -186,7 +186,7 @@ class APIClient:
 
     def delete(self, path: str, expected_status: int | None = 204, **kwargs: Any) -> requests.Response:
         """DELETE запрос"""
-        return self._request("DELETE", path, expected_status=expected_status, **kwargs)
+        return self._request(method="DELETE", path=path, expected_status=expected_status, **kwargs)
 
     # ---------- Утилиты ----------
 
@@ -217,27 +217,27 @@ class APIClient:
 
     def get_json(self, path: str, **kwargs: Any) -> Any:
         """GET запрос, возвращающий JSON (без проверки статуса)"""
-        response = self.get(path, **kwargs)
+        response = self.get(path=path, **kwargs)
         return response.json()
 
     def post_json(self, path: str, json: dict, **kwargs: Any) -> Any:
         """POST запрос, возвращающий JSON"""
-        response = self.post(path, json=json, **kwargs)
+        response = self.post(path=path, json=json, **kwargs)
         return response.json()
 
     def put_json(self, path: str, json: dict, **kwargs: Any) -> Any:
         """PUT запрос, возвращающий JSON"""
-        response = self.put(path, json=json, **kwargs)
+        response = self.put(path=path, json=json, **kwargs)
         return response.json()
 
     def patch_json(self, path: str, json: dict, **kwargs: Any) -> Any:
         """PATCH запрос, возвращающий JSON"""
-        response = self.patch(path, json=json, **kwargs)
+        response = self.patch(path=path, json=json, **kwargs)
         return response.json()
 
     def delete_json(self, path: str, **kwargs: Any) -> Any:
         """DELETE запрос, возвращающий JSON"""
-        response = self.delete(path, **kwargs)
+        response = self.delete(path=path, **kwargs)
         if response.status_code == 204:
             return {}
         return response.json()
