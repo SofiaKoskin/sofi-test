@@ -11,12 +11,10 @@ class APIModel(BaseModel):
 
 
 class Item(APIModel):
-    created_at: datetime
     description: str
     id: int
     name: str
     price: int
-    updated_at: datetime
 
 
 class ItemCreateResponse(APIModel):

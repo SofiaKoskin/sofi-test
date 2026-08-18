@@ -20,14 +20,12 @@ class Gender(StrEnum):
 class User(APIModel):
     age: int
     birth_date: datetime
-    created_at: datetime
     email: str
     gender: Gender
     id: int
     interests: list[str]
     name: str
     phone: str
-    updated_at: datetime
 
 
 class UserCreateResponse(APIModel):
