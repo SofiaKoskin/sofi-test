@@ -26,7 +26,6 @@ class TestUserNegative:
         "name",
         [
             pytest.param("", id="empty_name"),
-            # pytest.param(" ", id="single_space")
         ],
     )
     @allure.title("Создание пользователя с пустым именем")

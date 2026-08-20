@@ -44,12 +44,12 @@ class UserProcess:
 
     @staticmethod
     def delete_user(*, user_id: int, expected_status: int = 204) -> dict:
-        with allure.step(f"Удаление пользователя по id:{user_id}"):
+        with allure.step(f"Удаление пользователя по id: {user_id}"):
             return user_handler.delete_user(user_id=user_id, expected_status=expected_status)
 
     @staticmethod
     def update_user(*, user_id: int, user: UserRequest, expected_status: int = 200) -> None:
-        with allure.step(f"Обновление пользователяid={user_id}"):
+        with allure.step(f"Обновление пользователя id: {user_id}"):
             user_handler.update_user(
                 user_id=user_id, data=user.model_dump(mode="json"), expected_status=expected_status
             )

@@ -1,13 +1,5 @@
 import allure
-from hamcrest import (
-    assert_that,
-    contains_inanyorder,
-    equal_to,
-    has_entries,
-    is_in,
-    not_,
-    not_none,
-)
+from hamcrest import assert_that, contains_inanyorder, equal_to, has_entries, is_in, none, not_, not_none
 
 from framework.factory.user.user_process import (
     UserProcess,
@@ -75,9 +67,7 @@ class TestUser:
                     deleted_user = user
                     break
 
-            assert_that(
-                deleted_user, equal_to(None), f"Пользователь id={created_valid_user.id} найден в списке после удаления"
-            )
+            assert_that(deleted_user, none(), f"Пользователь id={created_valid_user.id} найден в списке после удаления")
 
     @allure.title("Изменение пользователя")
     def test_update_user(self, created_valid_user: User, valid_user: UserRequest):
@@ -106,11 +96,12 @@ class TestUser:
             assert_that(
                 found_users,
                 contains_inanyorder(user1, user2),
-                f"Данные пользователей {user1} и {user2} не совпадают с созданными",
+                f"Данные пользователей id={user1.id}, name='{user1.name}' "
+                f"и id={user2.id}, name='{user2.name}' не совпадают с созданными",
             )
 
             assert_that(
                 user3,
                 not_(is_in(found_users)),
-                f"Пользователь с другим именем был найден в результатах поиска: {user3}",
+                f"Пользователь с другим именем был найден в результатах поиска:id={user3.id}",
             )

@@ -100,5 +100,7 @@ class TestItem:
             )
 
             assert_that(
-                item3, not_(is_in(found_items)), f"Товар с другим именем был найден в результатах поиска: {item3}"
+                item3,
+                not_(is_in(found_items)),
+                f"Товар id={item3.id}с именем '{item3.name}'был найден в результатах поиска",
             )

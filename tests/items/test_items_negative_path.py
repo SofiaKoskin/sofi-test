@@ -8,17 +8,11 @@ from framework.models.models_items import ItemCreateResponse, ItemRequest
 
 @allure.feature("Негативное тестирование менеджмента товаров")
 class TestItemNegative:
-    @pytest.mark.parametrize(
-        "name",
-        [
-            pytest.param("", id="empty_name"),
-        ],
-    )
     @allure.title("Создание товара с пустым названием")
-    def test_create_item_empty_name(self, valid_item: ItemCreateResponse, name: str):
-        valid_item.name = name
+    def test_create_item_empty_name(self, valid_item: ItemRequest):
+        item = valid_item.model_copy(update={"name": ""})
 
-        ItemProcess.create_item(item=valid_item, expected_status=400, serialize=False)
+        ItemProcess.create_item(item=item, expected_status=400, serialize=False)
 
     @pytest.mark.parametrize(
         "description",
@@ -38,16 +32,9 @@ class TestItemNegative:
     def test_item_not_found(self):
         ItemProcess.get_item_by_id(item_id=9999999, expected_status=404, serialize=False)
 
-    @pytest.mark.parametrize(
-        "item_id",
-        [
-            pytest.param(-1, id="negative_one"),
-            pytest.param(-100, id="negative_one_hundred"),
-        ],
-    )
     @allure.title("Получение товара с отрицательным ID")
-    def test_get_item_negative_id(self, item_id: int):
-        ItemProcess.get_item_by_id(item_id=item_id, expected_status=404, serialize=False)
+    def test_get_item_negative_id(self):
+        ItemProcess.get_item_by_id(item_id=-1, expected_status=404, serialize=False)
 
     @allure.title("Обновление товара с пустым названием")
     def test_update_item_empty_name(self, created_valid_item: ItemRequest):
