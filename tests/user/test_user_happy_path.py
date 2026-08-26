@@ -1,9 +1,17 @@
 import allure
-from hamcrest import assert_that, contains_inanyorder, equal_to, has_entries, is_in, none, not_, not_none
-
-from framework.factory.user.user_process import (
-    UserProcess,
+from hamcrest import (
+    assert_that,
+    contains_inanyorder,
+    equal_to,
+    has_entries,
+    has_item,
+    has_length,
+    none,
+    not_,
+    not_none,
 )
+
+from framework.factory.user.user_process import UserProcess
 from framework.models.models_user import User, UserRequest
 
 
@@ -91,17 +99,14 @@ class TestUser:
         with allure.step("Получение пользователей по имени"):
             found_users = UserProcess.get_users_by_name(name=user1.name)
 
-            assert_that(len(found_users), equal_to(2), "Количество найденных пользователей не соотвествует ожидаемому")
+            assert_that(found_users, has_length(2), "Количество найденных пользователей не соотвествует ожидаемому")
 
             assert_that(
                 found_users,
                 contains_inanyorder(user1, user2),
-                f"Данные пользователей id={user1.id}, name='{user1.name}' "
-                f"и id={user2.id}, name='{user2.name}' не совпадают с созданными",
+                "Получены не те пользователи",
             )
 
             assert_that(
-                user3,
-                not_(is_in(found_users)),
-                f"Пользователь с другим именем был найден в результатах поиска:id={user3.id}",
+                found_users, not_(has_item(user3)), "Пользователь с другим именем был найден в результатах поиска"
             )
